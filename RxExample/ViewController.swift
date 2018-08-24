@@ -11,17 +11,46 @@ import RxSwift
 import RxCocoa
 
 class ViewController: UIViewController {
+    
+    let disposeBag = DisposeBag()
+    
+    @IBOutlet weak var label1: UILabel!
+    @IBOutlet weak var field1: UITextField!
 
+    let aa = ["a","b","c","d","e"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        let bb = aa.map { "ホリタク\($0)" }
+        print(bb)
+        
+        field1.rx.text
+            .bind(to: label1.rx.text)
+            .disposed(by: disposeBag)
+        
+        let _ = ClosureHolder()
     }
+}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+class ClosureHolder {
+    private var myClosure: ((_ a: String) -> Void)?
+    
+    deinit {
+        print("ClosureHolder deinit")
     }
-
-
+    
+    init() {
+        myClosure = { [weak self] in
+            print($0)
+            guard let me = self else { return }
+            me.innerFunc()
+        }
+        myClosure?("aaa")
+    }
+    
+    func innerFunc() {
+        print("innerFunc")
+    }
 }
 
